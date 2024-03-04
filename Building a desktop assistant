@@ -1,0 +1,65 @@
+import speech_recognition as sr
+import pyttsx3
+import datetime
+import webbrowser
+import os
+
+# Initialize the text-to-speech engine
+engine = pyttsx3.init()
+
+# Define the speak function to convert text to speech
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
+
+# Define the listen function to recognize speech
+def listen():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = r.listen(source)
+        try:
+            text = r.recognize_google(audio)
+            print("You said:", text)
+            return text
+        except:
+            print("Sorry, I didn't catch that.")
+            return ""
+
+# Define the main function to handle user commands
+def main():
+    while True:
+        command = listen().lower()
+
+        if "hello" in command:
+            speak("Hello! How can I help you?")
+
+        elif "what is the time" in command:
+            time = datetime.datetime.now().strftime("%I:%M %p")
+            speak("The time is " + time)
+
+        elif "open website" in command:
+            speak("Sure, which website would you like me to open?")
+            website = listen().lower()
+            if website:
+                webbrowser.open("https://www." + website + ".com")
+
+        elif "open file" in command:
+            speak("Sure, please provide the file name.")
+            file_name = listen().lower()
+            if file_name:
+                try:
+                    os.startfile(file_name)
+                except:
+                    speak("Sorry, I couldn't find the file.")
+
+        elif "exit" in command:
+            speak("Goodbye!")
+            break
+
+        else:
+            speak("Sorry, I don't understand. Can you please repeat?")
+
+# Start the desktop assistant
+speak("Hello! How can I assist you today?")
+main()
